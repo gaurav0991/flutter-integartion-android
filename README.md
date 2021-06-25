@@ -3,9 +3,24 @@
 A new flutter module project.
 
 ## Getting Started
+Steps to connect native android to flutter
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.dev/).
+- In build.gradle(app) file add this line
+ implementation project(':flutter')
 
-For instructions integrating Flutter modules to your existing applications,
-see the [add-to-app documentation](https://flutter.dev/docs/development/add-to-app).
+- In settings.gradle file add these lines :
+setBinding(new Binding([gradle: this ]))
+evaluate(new File(
+       settingsDir.parentFile,
+       'demotest/.android/include_flutter.groovy'
+))
+Where demotest means the flutter project name
+ 
+- Create a aar file in flutter by navigating to 
+flutter project > .android folder 
+And then in terminal ./gradlew flutter:assembleDebug
+ 
+- Then startActivity(FlutterActivity.createDefaultIntent(this))
+This will attach the flutter screen to native code 
+
+
