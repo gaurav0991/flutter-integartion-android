@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
+@pragma('vm:entry-point')
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -49,6 +50,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var errorMsg = "";
+  static const platform = const MethodChannel('com.test.mydata/data');
+  Future<void> _sendResultsToAndroidiOS(String data) async {
+    try {
+      Map<String, dynamic> resultMap = Map();
+      resultMap["data"] = data;
+      print("testing");
+      await platform.invokeMethod("FromClientToHost", resultMap.toString());
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    } catch (e) {
+      print(e);
+    }
+  }
+
   int _counter = 0;
   TextEditingController t1 = new TextEditingController();
   TextEditingController t2 = new TextEditingController();
@@ -160,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 print(data.body);
                 print(data.statusCode);
                 if (data.statusCode == 200) {
-                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                  await _sendResultsToAndroidiOS(data.body);
                 } else {
                   var j = jsonDecode(data.body);
                   showInSnackBar(j["message"], context);
